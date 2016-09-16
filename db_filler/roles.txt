@@ -1,0 +1,8 @@
+Sospechoso
+Fiscal
+Investigador Principal
+Investigador Auxiliar
+Juez
+Perito
+Custodio
+Testigo

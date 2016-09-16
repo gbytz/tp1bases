@@ -1,0 +1,8 @@
+Agente
+Cabo
+Cabo 1ro
+Sargento
+Sargento 1ro
+Suboficial Escribiente
+Suboficial Auxiliar
+Suboficial Mayor
