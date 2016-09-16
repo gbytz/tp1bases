@@ -72,4 +72,8 @@ Un ejemplo de uso: imprimir nombre y apellido de todas las personas:
 ¿Qué es db_filler.py?
 
 Es un script con varias funciones que llenan la base de datos con algunos datos de prueba, ahí pueden ver otros ejemplos de uso de detective.py.
+Lo ejecutan haciendo:
 
+	python db_filler.py
+
+*** OJO ***: El script borra varias de las tablas de la base de datos antes de rellenarla, así que tengan cuidado si ingresaron cosas a mano.

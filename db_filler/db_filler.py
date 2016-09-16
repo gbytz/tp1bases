@@ -7,13 +7,13 @@ from detective import *
 
 def vaciar_base():
     ''' Vacia la base de datos  '''
-    # Persona.delete().execute()
-    # Direccion.delete().execute()
-    # Rol.delete().execute()
-    # Categoria.delete().execute()
-    # Rango.delete().execute()
-    # Servicio.delete().execute()
-    # Departamento.delete().execute()
+    Persona.delete().execute()
+    Direccion.delete().execute()
+    Rol.delete().execute()
+    Categoria.delete().execute()
+    Rango.delete().execute()
+    Servicio.delete().execute()
+    Departamento.delete().execute()
     Oficial.delete().execute()
 
 def crear_categorias():
@@ -170,11 +170,11 @@ def crear_departamentos():
 
 if __name__ == "__main__":
     vaciar_base()
-    # crear_categorias()
-    # crear_roles()
-    # crear_direcciones()
-    # crear_personas()
-    # crear_rangos()
-    # crear_servicios()
-    # crear_departamentos()
+    crear_categorias()
+    crear_roles()
+    crear_direcciones()
+    crear_personas()
+    crear_rangos()
+    crear_servicios()
+    crear_departamentos()
     crear_oficiales()
