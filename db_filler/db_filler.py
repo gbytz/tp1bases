@@ -48,6 +48,7 @@ def vaciar_base():
     Congelado.delete().execute()
     Descartado.delete().execute()
     Resuelto.delete().execute()
+    Compromete.delete().execute()
     Evento.delete().execute()
     Custodia.delete().execute()
     Testimonio.delete().execute()
@@ -225,7 +226,7 @@ def crear_caso_medialunas():
         involucra_sospechoso = Involucra.create(
             dni=33843285,
             idcaso=get_current_id("caso"),
-            idrol=0,
+            idrol=TipoRol.Sospechoso,
         )
         # Defino el testigo
         involucra_testigo = Involucra.create(
@@ -237,13 +238,13 @@ def crear_caso_medialunas():
         involucra_investigador = Involucra.create(
             dni=47274813,
             idcaso=get_current_id("caso"),
-            idrol=2,
+            idrol=TipoRol.Principal,
         )
         # Defino investigador auxiliar
         involucra_auxiliar = Involucra.create(
             dni=49146016,
             idcaso=get_current_id("caso"),
-            idrol=3,
+            idrol=TipoRol.Auxiliar,
         )
 
         # Creo un testimonio
@@ -304,160 +305,256 @@ def crear_caso_medialunas():
 
         # Creo tres eventos
         evento0 = Evento.create(
-            descripcion="Se vio al sospechoso comiendo medialunas",
+            descripcion="El testigo vio al sospechoso comiendo medialunas",
             fecha=date(2016, 9, 8),
             idcaso=get_current_id("caso"),
             idevento=get_new_id("evento"),
         )
+        compromete_sospechoso = Compromete.create(
+            dni=involucra_sospechoso.dni.dni,
+            idcaso=get_current_id("caso"),
+            idevento=get_current_id("evento"),
+        )
+        compromete_testigo = Compromete.create(
+            dni=involucra_testigo.dni.dni,
+            idcaso=get_current_id("caso"),
+            idevento=get_current_id("evento"),
+        )
+
         evento1 = Evento.create(
             descripcion="Se presenta un posible testigo",
             fecha=date(2016, 9, 9),
             idcaso=get_current_id("caso"),
             idevento=get_new_id("evento"),
         )
+        se_presenta_testigo = Compromete.create(
+            dni=involucra_testigo.dni.dni,
+            idcaso=get_current_id("caso"),
+            idevento=get_current_id("evento"),
+        )
+
         evento2 = Evento.create(
             descripcion="Se le toma testimonio al testigo",
             fecha=date(2016, 9, 10),
             idcaso=get_current_id("caso"),
             idevento=get_new_id("evento"),
         )
+        declara_testigo = Compromete.create(
+            dni=involucra_testigo.dni.dni,
+            idcaso=get_current_id("caso"),
+            idevento=get_current_id("evento"),
+        )
+
     except Exception, e:
         print e
     else:
         pass
-
 
 def crear_caso_ayudante():
     ''' Crea el terrible caso del asesinato del ayudante de 2da '''
-    try:
-        caso = Caso.create(
-            descripcion="La victima fue misteriosamente asesinada despues de recibir muy buenas criticas en las encuestas",
-            fecha=date(2016, 9, 1),
-            fechaingreso= date.today(),
-            idcaso=get_new_id("caso"),
-            idcategoria=33, # Delito politico, porque si
-            lugar="Laboratorio 2 del DC",
-            tipo=TipoCaso.Pendiente
-        )
-        # Defino el principal sospechoso
-        involucra_sospechoso = Involucra.create(
-            dni=33843285,
-            idcaso=get_current_id("caso"),
-            idrol=0,
-        )
-        # Defino el testigo
-        involucra_testigo = Involucra.create(
-            dni=41355325,
-            idcaso=get_current_id("caso"),
-            idrol=TipoRol.Testigo,
-        )
-        # Defino investigador principal
-        involucra_investigador = Involucra.create(
-            dni=47846467,
-            idcaso=get_current_id("caso"),
-            idrol=2,
-        )
-        # Defino investigador auxiliar
-        involucra_auxiliar = Involucra.create(
-            dni=44236876,
-            idcaso=get_current_id("caso"),
-            idrol=3,
-        )
+    # try:
+    caso = Caso.create(
+        descripcion="La victima fue misteriosamente asesinada despues de recibir muy buenas criticas en las encuestas",
+        fecha=date(2016, 9, 1),
+        fechaingreso= date.today(),
+        idcaso=get_new_id("caso"),
+        idcategoria=33, # Delito politico, porque si
+        lugar="Laboratorio 2 del DC",
+        tipo=TipoCaso.Pendiente
+    )
+    # Defino el principal sospechoso
+    involucra_sospechoso = Involucra.create(
+        dni=33843285,
+        idcaso=get_current_id("caso"),
+        idrol=TipoRol.Sospechoso,
+    )
+    # Defino el testigo
+    involucra_testigo = Involucra.create(
+        dni=41355325,
+        idcaso=get_current_id("caso"),
+        idrol=TipoRol.Testigo,
+    )
+    # Defino investigador principal
+    involucra_investigador = Involucra.create(
+        dni=47846467,
+        idcaso=get_current_id("caso"),
+        idrol=TipoRol.Principal,
+    )
+    # Defino investigador auxiliar
+    involucra_auxiliar = Involucra.create(
+        dni=44236876,
+        idcaso=get_current_id("caso"),
+        idrol=TipoRol.Auxiliar,
+    )
+    # Defino un perito
+    involucra_perito = Involucra.create(
+        dni=47182555,
+        idcaso=get_current_id("caso"),
+        idrol=TipoRol.Auxiliar,   
+    )
+    # Defino juez
+    involucra_juez = Involucra.create(
+        dni=43727046,
+        idcaso=get_current_id("caso"),
+        idrol=TipoRol.Auxiliar,   
+    )
 
-        # Creo un testimonio
-        testimonio = Testimonio.create(
-            dnioficial=involucra_auxiliar.dni.dni,
-            dnipersona=involucra_testigo.dni.dni,
-            fecha=date(2016, 9, 12),
-            idcaso=get_current_id("caso"),
-            idtestimonio=get_new_id("testimonio"),
-            texto="Vi a Juancito a solas con Pepito en un puesto de bondiola en la costanera",
-        )
+    # Testimonio del testigo
+    testimonio_testigo = Testimonio.create(
+        dnioficial=involucra_auxiliar.dni.dni,
+        dnipersona=involucra_testigo.dni.dni,
+        fecha=date(2016, 9, 12),
+        idcaso=get_current_id("caso"),
+        idtestimonio=get_new_id("testimonio"),
+        texto="Vi a Juancito a solas con Pepito en un puesto de bondiola en la costanera",
+    )
+    # Testimonio del sospechoso
+    testimonio_sospechoso = Testimonio.create(
+        dnioficial=involucra_investigador.dni.dni,
+        dnipersona=involucra_sospechoso.dni.dni,
+        fecha=date(2016, 9, 13),
+        idcaso=get_current_id("caso"),
+        idtestimonio=get_new_id("testimonio"),
+        texto="Yo estaba en mi casa comiendo pizza",
+    )
+    # Testimonio corregido
+    testimonio_correccion = Testimonio.create(
+        dnioficial=involucra_investigador.dni.dni,
+        dnipersona=involucra_testigo.dni.dni,
+        fecha=date(2016, 9, 16),
+        idcaso=get_current_id("caso"),
+        idtestimonio=get_new_id("testimonio"),
+        texto="En realidad no lo vi a Pepito pero me dijeron que estaba con Juancito",
+    )
+    # Testimonio del sospechoso
+    testimonio_helado = Testimonio.create(
+        dnioficial=involucra_investigador.dni.dni,
+        dnipersona=involucra_sospechoso.dni.dni,
+        fecha=date(2016, 9, 13),
+        idcaso=get_current_id("caso"),
+        idtestimonio=get_new_id("testimonio"),
+        texto="Cuando termine la pizza me pedi un cuarto de helado :9",
+    )
 
-        # Creo la primer evidencia y dos custodias para la misma
-        evidencia0 = Evidencia.create(
-            descripcion="Sanguche de bondiola mordido",
-            fechahallazgo=date(2016, 9, 13),
-            fechaingreso=date(2016, 9, 14),
-            fechasellado=date(2016, 9, 13),
-            idcaso=get_current_id("caso"),
-            iddireccionactual=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
-            idevidencia=get_new_id("evidencia"),
-        )
-        custodia0 = Custodia.create(
-            comentario="El sanguche esta en buen estado",
-            fecha=date(2016, 9, 14),
-            idcustodia=get_new_id("custodia"),
-            iddireccion=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
-            idevidencia=get_current_id("evidencia"),
-            idoficial=involucra_auxiliar.dni.dni
-        )
-        custodia1 = Custodia.create(
-            comentario="El sanguche se esta descomponiendo",
-            fecha=date(2016, 9, 15),
-            idcustodia=get_new_id("custodia"),
-            iddireccion=involucra_investigador.dni.oficial_set.get().iddepto.iddireccion,
-            idevidencia=get_current_id("evidencia"),
-            idoficial=involucra_investigador.dni.dni
-        )
+    # Creo la primer evidencia y dos custodias para la misma
+    evidencia0 = Evidencia.create(
+        descripcion="Sanguche de bondiola mordido",
+        fechahallazgo=date(2016, 9, 13),
+        fechaingreso=date(2016, 9, 14),
+        fechasellado=date(2016, 9, 13),
+        idcaso=get_current_id("caso"),
+        iddireccionactual=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
+        idevidencia=get_new_id("evidencia"),
+    )
+    custodia_auxiliar = Custodia.create(
+        comentario="El sanguche esta en buen estado",
+        fecha=date(2016, 9, 14),
+        idcustodia=get_new_id("custodia"),
+        iddireccion=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
+        idevidencia=get_current_id("evidencia"),
+        idoficial=involucra_auxiliar.dni.dni
+    )
+    custodia_principal = Custodia.create(
+        comentario="El sanguche se esta descomponiendo",
+        fecha=date(2016, 9, 15),
+        idcustodia=get_new_id("custodia"),
+        iddireccion=involucra_investigador.dni.oficial_set.get().iddepto.iddireccion,
+        idevidencia=get_current_id("evidencia"),
+        idoficial=involucra_investigador.dni.dni
+    )
+    custodia_perito = Custodia.create(
+        comentario="Definitivamente el sanguche estaba mordido",
+        fecha=date(2016, 9, 16),
+        idcustodia=get_new_id("custodia"),
+        iddireccion=involucra_perito.dni.oficial_set.get().iddepto.iddireccion,
+        idevidencia=get_current_id("evidencia"),
+        idoficial=involucra_perito.dni.dni
+    )
+    custodia_juez = Custodia.create(
+        comentario="Que es esta cosa? Saquenlo de mi corte",
+        fecha=date(2016, 9, 19),
+        idcustodia=get_new_id("custodia"),
+        iddireccion=involucra_juez.dni.oficial_set.get().iddepto.iddireccion,
+        idevidencia=get_current_id("evidencia"),
+        idoficial=involucra_juez.dni.dni
+    )
 
-        # Creo otra evidencia con una custodia
-        evidencia1 = Evidencia.create(
-            descripcion="El cuerpo muerto del ayudente",
-            fechahallazgo=date(2016, 9, 13),
-            fechaingreso=date(2016, 9, 14),
-            fechasellado=date(2016, 9, 13),
-            idcaso=get_current_id("caso"),
-            iddireccionactual=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
-            idevidencia=get_new_id("evidencia"),
-        )
-        custodia2 = Custodia.create(
-            comentario="Ingreso del cuerpo a la morgue",
-            fecha=date(2016, 9, 14),
-            idcustodia=get_new_id("custodia"),
-            iddireccion=involucra_investigador.dni.oficial_set.get().iddepto.iddireccion,
-            idevidencia=get_current_id("evidencia"),
-            idoficial=involucra_investigador.dni.dni
-        )
+    # Creo otra evidencia con una custodia
+    evidencia1 = Evidencia.create(
+        descripcion="El cuerpo muerto del ayudente",
+        fechahallazgo=date(2016, 9, 13),
+        fechaingreso=date(2016, 9, 14),
+        fechasellado=date(2016, 9, 13),
+        idcaso=get_current_id("caso"),
+        iddireccionactual=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
+        idevidencia=get_new_id("evidencia"),
+    )
+    custodia2 = Custodia.create(
+        comentario="Ingreso del cuerpo a la morgue",
+        fecha=date(2016, 9, 14),
+        idcustodia=get_new_id("custodia"),
+        iddireccion=involucra_investigador.dni.oficial_set.get().iddepto.iddireccion,
+        idevidencia=get_current_id("evidencia"),
+        idoficial=involucra_investigador.dni.dni
+    )
 
-        # Creo tres eventos
-        evento0 = Evento.create(
-            descripcion="Se vio al sospechoso escondiendo un cuerpo",
-            fecha=date(2016, 9, 17),
-            idcaso=get_current_id("caso"),
-            idevento=get_new_id("evento"),
-        )
-        evento1 = Evento.create(
-            descripcion="Se vio al sospechoso leyendo el libro 'como cometer el climen perfecto'",
-            fecha=date(2016, 9, 18),
-            idcaso=get_current_id("caso"),
-            idevento=get_new_id("evento"),
-        )
-        evento2 = Evento.create(
-            descripcion="El sospechoso fue visto en la escena del crimen comiendo un choripan",
-            fecha=date(2016, 9, 19),
-            idcaso=get_current_id("caso"),
-            idevento=get_new_id("evento"),
-        )
+    # Evento 1
+    enconde_cuerpo = Evento.create(
+        descripcion="Se vio al sospechoso escondiendo un cuerpo",
+        fecha=date(2016, 9, 17),
+        idcaso=get_current_id("caso"),
+        idevento=get_new_id("evento"),
+    )
+    comprometido_con_el_cuerpo = Compromete.create(
+        dni=involucra_sospechoso.dni.dni,
+        idcaso=get_current_id("caso"),
+        idevento=get_current_id("evento"),
+    )
 
-        # Creo el caso resuelto
-        caso_resuelto = Resuelto.create(
-            descripcion=caso.descripcion,
-            dnioficial=involucra_investigador.dni.dni,
-            fecharesolucion=date(2019, 9, 20),
-            idcaso=get_current_id("caso")
-        )
+    # Evento 2
+    leyendo_libro = Evento.create(
+        descripcion="Se vio al sospechoso leyendo el libro 'como cometer el climen perfecto'",
+        fecha=date(2016, 9, 18),
+        idcaso=get_current_id("caso"),
+        idevento=get_new_id("evento"),
+    )
+    asesino_intelectual = Compromete.create(
+        dni=involucra_sospechoso.dni.dni,
+        idcaso=get_current_id("caso"),
+        idevento=get_current_id("evento"),
+    )
 
-        # Defino el culpable
-        culpable = Culpable.create(
-            dni=involucra_sospechoso.dni.dni,
-            idcaso=get_current_id("caso")
-        )
+    # Evento 3
+    comiendo_bondiola = Evento.create(
+        descripcion="El sospechoso fue visto en la escena del crimen comiendo un choripan",
+        fecha=date(2016, 9, 19),
+        idcaso=get_current_id("caso"),
+        idevento=get_new_id("evento"),
+    )
+    panza_llena = Compromete.create(
+        dni=involucra_sospechoso.dni.dni,
+        idcaso=get_current_id("caso"),
+        idevento=get_current_id("evento"),
+    )
 
-    except Exception, e:
-        print e
-    else:
-        pass
+    # Creo el caso resuelto
+    caso_resuelto = Resuelto.create(
+        descripcion=caso.descripcion,
+        dnioficial=involucra_investigador.dni.dni,
+        fecharesolucion=date(2019, 9, 20),
+        idcaso=get_current_id("caso")
+    )
+
+    # Defino el culpable
+    culpable = Culpable.create(
+        dni=involucra_sospechoso.dni.dni,
+        idcaso=get_current_id("caso")
+    )
+
+    # except Exception, e:
+    #     print e
+    # else:
+    #     pass
 
 def crear_caso_congelado():
     caso = Caso.create(
@@ -473,7 +570,7 @@ def crear_caso_congelado():
     involucra_investigador = Involucra.create(
         dni=42348958, 
         idcaso=get_current_id("caso"), 
-        idrol=2, 
+        idrol=TipoRol.Principal, 
     )
 
     caso_congelado = Congelado.create(
