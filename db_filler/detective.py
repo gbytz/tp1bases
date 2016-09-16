@@ -23,7 +23,7 @@ class Caso(BaseModel):
     idcaso = PrimaryKeyField(db_column='idCaso')
     idcategoria = ForeignKeyField(db_column='idCategoria', rel_model=Categoria, to_field='idcategoria')
     lugar = CharField()
-    tipo = CharField(null=True)
+    tipo = IntegerField(null=True)
 
     class Meta:
         db_table = 'caso'
