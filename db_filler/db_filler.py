@@ -12,6 +12,16 @@ class TipoCaso:
     Descartado = 2
     Resuelto = 3
 
+class TipoRol:
+    Sospechoso = 0
+    Fiscal = 1
+    Principal = 2
+    Auxiliar = 3
+    Juez = 4
+    Perito = 5 
+    Custodio = 6
+    Testigo = 7
+
 ID_DICT = {}
 
 def get_current_id(entidad):
@@ -35,6 +45,7 @@ def vaciar_base():
     # Departamento.delete().execute()
     # Oficial.delete().execute()
     Culpable.delete().execute()
+    Congelado.delete().execute()
     Descartado.delete().execute()
     Resuelto.delete().execute()
     Evento.delete().execute()
@@ -220,7 +231,7 @@ def crear_caso_medialunas():
         involucra_testigo = Involucra.create(
             dni=49198438,
             idcaso=get_current_id("caso"),
-            idrol=7,
+            idrol=TipoRol.Testigo,
         )
         # Defino investigador principal
         involucra_investigador = Involucra.create(
@@ -338,7 +349,7 @@ def crear_caso_ayudante():
         involucra_testigo = Involucra.create(
             dni=41355325,
             idcaso=get_current_id("caso"),
-            idrol=7,
+            idrol=TipoRol.Testigo,
         )
         # Defino investigador principal
         involucra_investigador = Involucra.create(
@@ -448,6 +459,29 @@ def crear_caso_ayudante():
     else:
         pass
 
+def crear_caso_congelado():
+    caso = Caso.create(
+        descripcion="Alguien esta vendiendo fernet en la Noriega", 
+        fecha=date(2016, 1, 1), 
+        fechaingreso=date(2016, 1, 3), 
+        idcaso=get_new_id("caso"), 
+        idcategoria=5, 
+        lugar="La Biblioteca Noriega", 
+        tipo=TipoCaso.Pendiente, 
+    )
+
+    involucra_investigador = Involucra.create(
+        dni=42348958, 
+        idcaso=get_current_id("caso"), 
+        idrol=2, 
+    )
+
+    caso_congelado = Congelado.create(
+        comentario="No hay hielo :(",
+        fechacancelacion=date.today(),
+        idcaso=get_current_id("caso"),
+    )
+
 def crear_caso_descartado():
     caso = Caso.create(
         descripcion="Abandono de grupo de TP",
@@ -461,7 +495,7 @@ def crear_caso_descartado():
 
     caso_descartado = Descartado.create(
         motivos="Esto paso el cuatrimestre pasado",
-        fechadescarte= date.today(),
+        fechadescarte=date.today(),
         idcaso=get_current_id("caso")
     )
 
@@ -477,4 +511,5 @@ if __name__ == "__main__":
     # crear_oficiales()
     crear_caso_medialunas()
     crear_caso_ayudante()
+    crear_caso_congelado()
     crear_caso_descartado()
