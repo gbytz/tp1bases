@@ -228,7 +228,7 @@ class Ranking(BaseModel):
         db_table = 'ranking'
 
 class Resuelto(BaseModel):
-    descripcion = CharField(null=True)
+    descripcion = TextField(null=True)
     dnioficial = ForeignKeyField(db_column='dniOficial', rel_model=Involucra, to_field='dni')
     fecharesolucion = DateTimeField(db_column='fechaResolucion')
     idcaso = ForeignKeyField(db_column='idCaso', primary_key=True, rel_model=Involucra, related_name='resuelto_involucra_idcaso_set', to_field='idcaso')

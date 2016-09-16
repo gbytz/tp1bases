@@ -12,6 +12,18 @@ class TipoCaso:
     Descartado = 2
     Resuelto = 3
 
+ID_DICT = {}
+
+def get_current_id(entidad):
+    return ID_DICT[entidad]
+
+def get_new_id(entidad):
+    if entidad in ID_DICT:
+        ID_DICT[entidad] = ID_DICT[entidad] + 1
+    else:
+        ID_DICT[entidad] = 0
+    return ID_DICT[entidad]
+
 def vaciar_base():
     ''' Vacia la base de datos  '''
     # Persona.delete().execute()
@@ -22,6 +34,9 @@ def vaciar_base():
     # Servicio.delete().execute()
     # Departamento.delete().execute()
     # Oficial.delete().execute()
+    Culpable.delete().execute()
+    Resuelto.delete().execute()
+    Evento.delete().execute()
     Custodia.delete().execute()
     Testimonio.delete().execute()
     Evidencia.delete().execute()
@@ -189,7 +204,7 @@ def crear_caso_medialunas():
             descripcion="Alguien se robo las medialunas que compramos para comer haciendo el TP de bases",
             fecha=date(2016, 9, 3),
             fechaingreso= date.today(),
-            idcaso=0, # El primer caso que creo a mano
+            idcaso=get_new_id("caso"),
             idcategoria=76, # Robo de medialunas
             lugar="La juntada de TP",
             tipo=TipoCaso.Pendiente
@@ -197,25 +212,25 @@ def crear_caso_medialunas():
         # Defino el principal sospechoso
         involucra_sospechoso = Involucra.create(
             dni=33843285,
-            idcaso=0,
+            idcaso=get_current_id("caso"),
             idrol=0,
         )
         # Defino el testigo
         involucra_testigo = Involucra.create(
             dni=49198438,
-            idcaso=0,
+            idcaso=get_current_id("caso"),
             idrol=7,
         )
         # Defino investigador principal
         involucra_investigador = Involucra.create(
             dni=47274813,
-            idcaso=0,
+            idcaso=get_current_id("caso"),
             idrol=2,
         )
         # Defino investigador auxiliar
         involucra_auxiliar = Involucra.create(
             dni=49146016,
-            idcaso=0,
+            idcaso=get_current_id("caso"),
             idrol=3,
         )
 
@@ -224,8 +239,8 @@ def crear_caso_medialunas():
             dnioficial=involucra_auxiliar.dni.dni,
             dnipersona=involucra_testigo.dni.dni,
             fecha=date(2016, 9, 10),
-            idcaso=caso.idcaso,
-            idtestimonio=0,
+            idcaso=get_current_id("caso"),
+            idtestimonio=get_new_id("testimonio"),
             texto="Entre a la cocina y lo vi a Pepito sospechosamente parado cerca del plato de medialunas",
         )
 
@@ -235,24 +250,24 @@ def crear_caso_medialunas():
             fechahallazgo=date(2016, 9, 4),
             fechaingreso=date(2016, 9, 4),
             fechasellado=date(2016, 9, 4),
-            idcaso=caso.idcaso,
+            idcaso=get_current_id("caso"),
             iddireccionactual=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
-            idevidencia=0,
+            idevidencia=get_new_id("evidencia"),
         )
         custodia0 = Custodia.create(
             comentario="Registro inicial de esta evidencia",
             fecha=date(2016, 9, 6),
-            idcustodia=0,
+            idcustodia=get_new_id("custodia"),
             iddireccion=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
-            idevidencia=evidencia0.idevidencia,
+            idevidencia=get_current_id("evidencia"),
             idoficial=involucra_auxiliar.dni.dni
         )
         custodia1 = Custodia.create(
             comentario="Paso a manos del investigador principal",
             fecha=date(2016, 9, 7),
-            idcustodia=custodia0.idcustodia + 1,
+            idcustodia=get_new_id("custodia"),
             iddireccion=involucra_investigador.dni.oficial_set.get().iddepto.iddireccion,
-            idevidencia=evidencia0.idevidencia,
+            idevidencia=get_current_id("evidencia"),
             idoficial=involucra_investigador.dni.dni
         )
 
@@ -262,16 +277,16 @@ def crear_caso_medialunas():
             fechahallazgo=date(2016, 9, 4),
             fechaingreso=date(2016, 9, 4),
             fechasellado=date(2016, 9, 4),
-            idcaso=caso.idcaso,
+            idcaso=get_current_id("caso"),
             iddireccionactual=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
-            idevidencia=evidencia0.idevidencia + 1,
+            idevidencia=get_new_id("evidencia"),
         )
         custodia2 = Custodia.create(
             comentario="Ingreso inicial de la evidencia",
             fecha=date(2016, 9, 6),
-            idcustodia=custodia1.idcustodia + 1,
+            idcustodia=get_new_id("custodia"),
             iddireccion=involucra_investigador.dni.oficial_set.get().iddepto.iddireccion,
-            idevidencia=evidencia0.idevidencia + 1,
+            idevidencia=get_current_id("evidencia"),
             idoficial=involucra_investigador.dni.dni
         )
 
@@ -279,26 +294,158 @@ def crear_caso_medialunas():
         evento0 = Evento.create(
             descripcion="Se vio al sospechoso comiendo medialunas",
             fecha=date(2016, 9, 8),
-            idcaso=caso.idcaso,
-            idevento=0,
+            idcaso=get_current_id("caso"),
+            idevento=get_new_id("evento"),
         )
         evento1 = Evento.create(
             descripcion="Se presenta un posible testigo",
             fecha=date(2016, 9, 9),
-            idcaso=caso.idcaso,
-            idevento=evento0.idevento + 1,
+            idcaso=get_current_id("caso"),
+            idevento=get_new_id("evento"),
         )
         evento2 = Evento.create(
             descripcion="Se le toma testimonio al testigo",
             fecha=date(2016, 9, 10),
-            idcaso=caso.idcaso,
-            idevento=evento1.idevento + 1,
+            idcaso=get_current_id("caso"),
+            idevento=get_new_id("evento"),
         )
     except Exception, e:
         print e
     else:
         pass
 
+
+def crear_caso_ayudante():
+    ''' Crea el terrible caso del asesinato del ayudante de 2da '''
+    try:
+        caso = Caso.create(
+            descripcion="La victima fue misteriosamente asesinada despues de recibir muy buenas criticas en las encuestas",
+            fecha=date(2016, 9, 1),
+            fechaingreso= date.today(),
+            idcaso=get_new_id("caso"),
+            idcategoria=33, # Delito politico, porque si
+            lugar="Laboratorio 2 del DC",
+            tipo=TipoCaso.Pendiente
+        )
+        # Defino el principal sospechoso
+        involucra_sospechoso = Involucra.create(
+            dni=33843285,
+            idcaso=get_current_id("caso"),
+            idrol=0,
+        )
+        # Defino el testigo
+        involucra_testigo = Involucra.create(
+            dni=41355325,
+            idcaso=get_current_id("caso"),
+            idrol=7,
+        )
+        # Defino investigador principal
+        involucra_investigador = Involucra.create(
+            dni=47846467,
+            idcaso=get_current_id("caso"),
+            idrol=2,
+        )
+        # Defino investigador auxiliar
+        involucra_auxiliar = Involucra.create(
+            dni=44236876,
+            idcaso=get_current_id("caso"),
+            idrol=3,
+        )
+
+        # Creo un testimonio
+        testimonio = Testimonio.create(
+            dnioficial=involucra_auxiliar.dni.dni,
+            dnipersona=involucra_testigo.dni.dni,
+            fecha=date(2016, 9, 12),
+            idcaso=get_current_id("caso"),
+            idtestimonio=get_new_id("testimonio"),
+            texto="Vi a Juancito a solas con Pepito en un puesto de bondiola en la costanera",
+        )
+
+        # Creo la primer evidencia y dos custodias para la misma
+        evidencia0 = Evidencia.create(
+            descripcion="Sanguche de bondiola mordido",
+            fechahallazgo=date(2016, 9, 13),
+            fechaingreso=date(2016, 9, 14),
+            fechasellado=date(2016, 9, 13),
+            idcaso=get_current_id("caso"),
+            iddireccionactual=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
+            idevidencia=get_new_id("evidencia"),
+        )
+        custodia0 = Custodia.create(
+            comentario="El sanguche esta en buen estado",
+            fecha=date(2016, 9, 14),
+            idcustodia=get_new_id("custodia"),
+            iddireccion=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
+            idevidencia=get_current_id("evidencia"),
+            idoficial=involucra_auxiliar.dni.dni
+        )
+        custodia1 = Custodia.create(
+            comentario="El sanguche se esta descomponiendo",
+            fecha=date(2016, 9, 15),
+            idcustodia=get_new_id("custodia"),
+            iddireccion=involucra_investigador.dni.oficial_set.get().iddepto.iddireccion,
+            idevidencia=get_current_id("evidencia"),
+            idoficial=involucra_investigador.dni.dni
+        )
+
+        # Creo otra evidencia con una custodia
+        evidencia1 = Evidencia.create(
+            descripcion="El cuerpo muerto del ayudente",
+            fechahallazgo=date(2016, 9, 13),
+            fechaingreso=date(2016, 9, 14),
+            fechasellado=date(2016, 9, 13),
+            idcaso=get_current_id("caso"),
+            iddireccionactual=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
+            idevidencia=get_new_id("evidencia"),
+        )
+        custodia2 = Custodia.create(
+            comentario="Ingreso del cuerpo a la morgue",
+            fecha=date(2016, 9, 14),
+            idcustodia=get_new_id("custodia"),
+            iddireccion=involucra_investigador.dni.oficial_set.get().iddepto.iddireccion,
+            idevidencia=get_current_id("evidencia"),
+            idoficial=involucra_investigador.dni.dni
+        )
+
+        # Creo tres eventos
+        evento0 = Evento.create(
+            descripcion="Se vio al sospechoso escondiendo un cuerpo",
+            fecha=date(2016, 9, 17),
+            idcaso=get_current_id("caso"),
+            idevento=get_new_id("evento"),
+        )
+        evento1 = Evento.create(
+            descripcion="Se vio al sospechoso leyendo el libro 'como cometer el climen perfecto'",
+            fecha=date(2016, 9, 18),
+            idcaso=get_current_id("caso"),
+            idevento=get_new_id("evento"),
+        )
+        evento2 = Evento.create(
+            descripcion="El sospechoso fue visto en la escena del crimen comiendo un choripan",
+            fecha=date(2016, 9, 19),
+            idcaso=get_current_id("caso"),
+            idevento=get_new_id("evento"),
+        )
+
+        # Creo el caso resuelto
+        caso_resuelto = Resuelto.create(
+            descripcion=caso.descripcion,
+            dnioficial=involucra_investigador.dni.dni,
+            fecharesolucion=date(2019, 9, 20),
+            idcaso=get_current_id("caso")
+        )
+
+        # Defino el culpable
+        culpable = Culpable.create(
+            dni=involucra_sospechoso.dni.dni,
+            idcaso=get_current_id("caso")
+        )
+
+    except Exception, e:
+        print e
+    else:
+        pass
 
 if __name__ == "__main__":
     vaciar_base()
@@ -311,3 +458,4 @@ if __name__ == "__main__":
     # crear_departamentos()
     # crear_oficiales()
     crear_caso_medialunas()
+    crear_caso_ayudante()
