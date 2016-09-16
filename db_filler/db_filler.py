@@ -122,7 +122,7 @@ def crear_oficiales():
         except Exception, e:
             print e
         else:
-            print "\Creado oficial: dni:{} nombre:{} apellido:{} placa:{} escritorio:{}".format(oficial.dni, persona.nombre, persona.apellido, oficial.numeroplaca, oficial.numeroescritorio)
+            print "\tCreado oficial: dni:{} nombre:{} apellido:{} placa:{} escritorio:{}".format(oficial.dni.dni, persona.nombre, persona.apellido, oficial.numeroplaca, oficial.numeroescritorio)
 
 def crear_rangos():
     ''' Rellena la tabla "Rango" a partir de una lista de delitos guardada en delitos.txt '''
