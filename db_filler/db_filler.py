@@ -556,7 +556,7 @@ def crear_caso_ayudante():
     # else:
     #     pass
 
-def crear_caso_congelado():
+def crear_casos_congelados():
     caso = Caso.create(
         descripcion="Alguien esta vendiendo fernet en la Noriega", 
         fecha=date(2016, 1, 1), 
@@ -579,7 +579,24 @@ def crear_caso_congelado():
         idcaso=get_current_id("caso"),
     )
 
-def crear_caso_descartado():
+    for index in range(7):
+        caso = Caso.create(
+            descripcion="Caso a congelar numero {}".format(index), 
+            fecha=date(2016, randint(1, 8), randint(1, 28)),
+            fechaingreso=date.today(), 
+            idcaso=get_new_id("caso"), 
+            idcategoria=choice(Categoria.select()).idcategoria, 
+            lugar="lugar de caso congelado {}".format(index), 
+            tipo=TipoCaso.Pendiente, 
+        )
+
+        caso_congelado = Congelado.create(
+            comentario="Caso congelado {}".format(index),
+            fechacancelacion=date.today(),
+            idcaso=get_current_id("caso"),
+        )
+
+def crear_casos_descartados():
     caso = Caso.create(
         descripcion="Abandono de grupo de TP",
         fecha=date(2016, 9, 1),
@@ -596,6 +613,23 @@ def crear_caso_descartado():
         idcaso=get_current_id("caso")
     )
 
+    for index in range(10):
+        caso = Caso.create(
+            descripcion="Caso para descartar {}".format(index),
+            fecha=date(2016, randint(1, 8), randint(1, 28)),
+            fechaingreso=date.today(),
+            idcaso=get_new_id("caso"),
+            idcategoria=choice(Categoria.select()).idcategoria,
+            lugar="lugar de caso a descartar {}".format(index),
+            tipo=TipoCaso.Pendiente
+        )
+
+        caso_descartado = Descartado.create(
+            motivos="Caso Descartado {}".format(index),
+            fechadescarte=date.today(),
+            idcaso=get_current_id("caso")
+        ) 
+
 if __name__ == "__main__":
     vaciar_base()
     # crear_categorias()
@@ -608,5 +642,5 @@ if __name__ == "__main__":
     # crear_oficiales()
     crear_caso_medialunas()
     crear_caso_ayudante()
-    crear_caso_congelado()
-    crear_caso_descartado()
+    crear_casos_congelados()
+    crear_casos_descartados()
