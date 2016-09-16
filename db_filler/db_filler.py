@@ -22,6 +22,7 @@ def vaciar_base():
     # Servicio.delete().execute()
     # Departamento.delete().execute()
     # Oficial.delete().execute()
+    Custodia.delete().execute()
     Testimonio.delete().execute()
     Evidencia.delete().execute()
     Involucra.delete().execute()
@@ -228,6 +229,7 @@ def crear_caso_medialunas():
             texto="Entre a la cocina y lo vi a Pepito sospechosamente parado cerca del plato de medialunas",
         )
 
+        # Creo la primer evidencia y dos custodias para la misma
         evidencia0 = Evidencia.create(
             descripcion="Servilleta manchada con almibar",
             fechahallazgo=date(2016, 9, 4),
@@ -237,7 +239,24 @@ def crear_caso_medialunas():
             iddireccionactual=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
             idevidencia=0,
         )
+        custodia0 = Custodia.create(
+            comentario="Registro inicial de esta evidencia",
+            fecha=date(2016, 9, 6),
+            idcustodia=0,
+            iddireccion=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
+            idevidencia=evidencia0.idevidencia,
+            idoficial=involucra_auxiliar.dni.dni
+        )
+        custodia1 = Custodia.create(
+            comentario="Paso a manos del investigador principal",
+            fecha=date(2016, 9, 7),
+            idcustodia=custodia0.idcustodia + 1,
+            iddireccion=involucra_investigador.dni.oficial_set.get().iddepto.iddireccion,
+            idevidencia=evidencia0.idevidencia,
+            idoficial=involucra_investigador.dni.dni
+        )
 
+        # Creo otra evidencia con una custodia
         evidencia1 = Evidencia.create(
             descripcion="Envoltorio de la panaderia 'El gran canon' ",
             fechahallazgo=date(2016, 9, 4),
@@ -247,7 +266,34 @@ def crear_caso_medialunas():
             iddireccionactual=involucra_auxiliar.dni.oficial_set.get().iddepto.iddireccion,
             idevidencia=evidencia0.idevidencia + 1,
         )
+        custodia2 = Custodia.create(
+            comentario="Ingreso inicial de la evidencia",
+            fecha=date(2016, 9, 6),
+            idcustodia=custodia1.idcustodia + 1,
+            iddireccion=involucra_investigador.dni.oficial_set.get().iddepto.iddireccion,
+            idevidencia=evidencia0.idevidencia + 1,
+            idoficial=involucra_investigador.dni.dni
+        )
 
+        # Creo tres eventos
+        evento0 = Evento.create(
+            descripcion="Se vio al sospechoso comiendo medialunas",
+            fecha=date(2016, 9, 8),
+            idcaso=caso.idcaso,
+            idevento=0,
+        )
+        evento1 = Evento.create(
+            descripcion="Se presenta un posible testigo",
+            fecha=date(2016, 9, 9),
+            idcaso=caso.idcaso,
+            idevento=evento0.idevento + 1,
+        )
+        evento2 = Evento.create(
+            descripcion="Se le toma testimonio al testigo",
+            fecha=date(2016, 9, 10),
+            idcaso=caso.idcaso,
+            idevento=evento1.idevento + 1,
+        )
     except Exception, e:
         print e
     else:
