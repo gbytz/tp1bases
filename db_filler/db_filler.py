@@ -35,6 +35,7 @@ def vaciar_base():
     # Departamento.delete().execute()
     # Oficial.delete().execute()
     Culpable.delete().execute()
+    Descartado.delete().execute()
     Resuelto.delete().execute()
     Evento.delete().execute()
     Custodia.delete().execute()
@@ -447,6 +448,23 @@ def crear_caso_ayudante():
     else:
         pass
 
+def crear_caso_descartado():
+    caso = Caso.create(
+        descripcion="Abandono de grupo de TP",
+        fecha=date(2016, 9, 1),
+        fechaingreso= date.today(),
+        idcaso=get_new_id("caso"),
+        idcategoria=7, # Alta traicion
+        lugar="Iglesia",
+        tipo=TipoCaso.Pendiente
+    )
+
+    caso_descartado = Descartado.create(
+        motivos="Esto paso el cuatrimestre pasado",
+        fechadescarte= date.today(),
+        idcaso=get_current_id("caso")
+    )
+
 if __name__ == "__main__":
     vaciar_base()
     # crear_categorias()
@@ -459,3 +477,4 @@ if __name__ == "__main__":
     # crear_oficiales()
     crear_caso_medialunas()
     crear_caso_ayudante()
+    crear_caso_descartado()
