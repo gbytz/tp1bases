@@ -18,7 +18,7 @@ class TipoRol:
     Principal = 2
     Auxiliar = 3
     Juez = 4
-    Perito = 5 
+    Perito = 5
     Custodio = 6
     Testigo = 7
 
@@ -36,6 +36,7 @@ def get_new_id(entidad):
 
 def vaciar_base():
     ''' Vacia la base de datos  '''
+    Domicilio.delete().execute()
     # Persona.delete().execute()
     # Direccion.delete().execute()
     # Rol.delete().execute()
@@ -390,13 +391,13 @@ def crear_caso_ayudante():
     involucra_perito = Involucra.create(
         dni=47182555,
         idcaso=get_current_id("caso"),
-        idrol=TipoRol.Auxiliar,   
+        idrol=TipoRol.Auxiliar,
     )
     # Defino juez
     involucra_juez = Involucra.create(
         dni=43727046,
         idcaso=get_current_id("caso"),
-        idrol=TipoRol.Auxiliar,   
+        idrol=TipoRol.Auxiliar,
     )
 
     # Testimonio del testigo
@@ -558,19 +559,19 @@ def crear_caso_ayudante():
 
 def crear_casos_congelados():
     caso = Caso.create(
-        descripcion="Alguien esta vendiendo fernet en la Noriega", 
-        fecha=date(2016, 1, 1), 
-        fechaingreso=date(2016, 1, 3), 
-        idcaso=get_new_id("caso"), 
-        idcategoria=5, 
-        lugar="La Biblioteca Noriega", 
-        tipo=TipoCaso.Pendiente, 
+        descripcion="Alguien esta vendiendo fernet en la Noriega",
+        fecha=date(2016, 1, 1),
+        fechaingreso=date(2016, 1, 3),
+        idcaso=get_new_id("caso"),
+        idcategoria=5,
+        lugar="La Biblioteca Noriega",
+        tipo=TipoCaso.Pendiente,
     )
 
     involucra_investigador = Involucra.create(
-        dni=42348958, 
-        idcaso=get_current_id("caso"), 
-        idrol=TipoRol.Principal, 
+        dni=42348958,
+        idcaso=get_current_id("caso"),
+        idrol=TipoRol.Principal,
     )
 
     caso_congelado = Congelado.create(
@@ -581,13 +582,13 @@ def crear_casos_congelados():
 
     for index in range(7):
         caso = Caso.create(
-            descripcion="Caso a congelar numero {}".format(index), 
+            descripcion="Caso a congelar numero {}".format(index),
             fecha=date(2016, randint(1, 8), randint(1, 28)),
-            fechaingreso=date.today(), 
-            idcaso=get_new_id("caso"), 
-            idcategoria=choice(Categoria.select()).idcategoria, 
-            lugar="lugar de caso congelado {}".format(index), 
-            tipo=TipoCaso.Pendiente, 
+            fechaingreso=date.today(),
+            idcaso=get_new_id("caso"),
+            idcategoria=choice(Categoria.select()).idcategoria,
+            lugar="lugar de caso congelado {}".format(index),
+            tipo=TipoCaso.Pendiente,
         )
 
         caso_congelado = Congelado.create(
@@ -628,7 +629,83 @@ def crear_casos_descartados():
             motivos="Caso Descartado {}".format(index),
             fechadescarte=date.today(),
             idcaso=get_current_id("caso")
-        ) 
+        )
+
+def crear_todos_sospechosos():
+    for direccion in Direccion.select():
+        for persona in direccion.persona_set:
+            Caso.create(
+                descripcion="Caso para complicar a {}".format(persona.dni),
+                fecha=date(2015, 7, 2),
+                fechaingreso=date.today(),
+                idcaso=get_new_id("caso"),
+                idcategoria=choice(Categoria.select()).idcategoria,
+                lugar="{} {}".format(direccion.numero, direccion.departamento),
+                tipo=TipoCaso.Pendiente,
+            )
+
+            Involucra.create(
+                dni=persona.dni,
+                idcaso=get_current_id("caso"),
+                idrol=TipoRol.Sospechoso,
+            )
+
+def crear_domicilios():
+    for persona in Persona.select():
+        # Todas personas tienen como domicilio su direccion actual
+        Domicilio.create(
+            dni=persona.dni,
+            fechainicio=date(2010, 1, 1),
+            fechafin=date(2012, 1, 1),
+            iddireccion=persona.iddireccion,
+        )
+
+        # Todas las personas vivieron en en la direccion de id 0
+        Domicilio.create(
+            dni=persona.dni,
+            fechainicio=date(2012, 1, 2),
+            fechafin=date.today(),
+            iddireccion=0,
+        )
+
+def crear_custodias_para_oficiales():
+    for index in range(1, 4):
+        oficial = choice(Oficial.select())
+        for iteracion in range(index):
+            Caso.create(
+                descripcion="Caso custodia {} oficial:{}".format(iteracion + 1, oficial.dni.dni),
+                fecha=date.today(),
+                fechaingreso=date.today(),
+                idcaso=get_new_id("caso"),
+                idcategoria=choice(Categoria.select()).idcategoria,
+                lugar="",
+                tipo=TipoCaso.Pendiente,
+            )
+
+            Involucra.create(
+                dni=oficial.dni.dni,
+                idcaso=get_current_id("caso"),
+                idrol=TipoRol.Principal,
+            )
+
+            Evidencia.create(
+                descripcion="Evidencia para custodio {}".format(oficial.dni.dni),
+                fechahallazgo=date.today(),
+                fechaingreso=date.today(),
+                fechasellado=date.today(),
+                idcaso=get_current_id("caso"),
+                iddireccionactual=oficial.iddepto.iddireccion,
+                idevidencia=get_new_id("evidencia"),
+            )
+
+            Custodia.create(
+                comentario="Oficial {} custodia evidencia {}".format(oficial.dni.dni, get_current_id("evidencia")),
+                fecha=date.today(),
+                idcustodia=get_new_id("custodia"),
+                iddireccion=oficial.iddepto.iddireccion,
+                idevidencia=get_current_id("evidencia"),
+                idoficial=oficial.dni.dni,
+            )
 
 if __name__ == "__main__":
     vaciar_base()
@@ -644,3 +721,6 @@ if __name__ == "__main__":
     crear_caso_ayudante()
     crear_casos_congelados()
     crear_casos_descartados()
+    crear_todos_sospechosos()
+    crear_domicilios()
+    crear_custodias_para_oficiales()

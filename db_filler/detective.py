@@ -1,7 +1,6 @@
 from peewee import *
 
-# database = MySQLDatabase('detective', **{'host': '104.236.205.150', 'password': 'bases2016', 'user': 'bases'})
-database = MySQLDatabase('detective', **{'host': '127.0.0.1', 'password': 'bases2016', 'user': 'bases'})
+database = MySQLDatabase('detective', **{'host': '104.236.205.150', 'password': 'bases2016', 'user': 'bases'})
 
 class UnknownField(object):
     def __init__(self, *_, **__): pass
@@ -201,6 +200,34 @@ class Descartado(BaseModel):
 
     class Meta:
         db_table = 'descartado'
+
+class Direccionesdemassospechosos(BaseModel):
+    domicilio = IntegerField()
+
+    class Meta:
+        db_table = 'direccionesDeMasSospechosos'
+
+class Domicilio(BaseModel):
+    dni = ForeignKeyField(db_column='dni', rel_model=Persona, to_field='dni')
+    fechafin = DateField(db_column='fechaFin', null=True)
+    fechainicio = DateField(db_column='fechaInicio')
+    iddireccion = ForeignKeyField(db_column='idDireccion', rel_model=Direccion, to_field='iddireccion')
+
+    class Meta:
+        db_table = 'domicilio'
+        indexes = (
+            (('dni', 'iddireccion'), True),
+        )
+        primary_key = CompositeKey('dni', 'iddireccion')
+
+class Eventosdecaso(BaseModel):
+    descripcion = TextField()
+    fecha = DateTimeField()
+    idcaso = IntegerField(db_column='idCaso')
+    idevento = IntegerField(db_column='idEvento')
+
+    class Meta:
+        db_table = 'eventosDeCaso'
 
 class Oficialescustodios(BaseModel):
     dni = IntegerField()
